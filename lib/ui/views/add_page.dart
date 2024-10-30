@@ -1,4 +1,6 @@
+import 'package:contact_app/ui/cubit/add_page_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddPage extends StatefulWidget {
   const AddPage({super.key});
@@ -10,10 +12,6 @@ class AddPage extends StatefulWidget {
 class _AddPageState extends State<AddPage> {
   var tfPersonName = TextEditingController();
   var tfPersonTel = TextEditingController();
-
-  Future<void> savePerson(String person_name, String person_tel) async {
-    print("Save Person: $person_name $person_tel");
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +34,7 @@ class _AddPageState extends State<AddPage> {
                 decoration: const InputDecoration(hintText: "Person Tel"),
               ),
               ElevatedButton(onPressed: () {
-                savePerson(tfPersonName.text, tfPersonTel.text);
+                context.read<AddPageCubit>().savePerson(tfPersonName.text, tfPersonTel.text);
               }, child: const Text("Save"))
             ],
           ),

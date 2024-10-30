@@ -1,5 +1,7 @@
 import 'package:contact_app/data/entity/person.dart';
+import 'package:contact_app/ui/cubit/detail_page_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DetailPage extends StatefulWidget {
   final Person person;
@@ -13,10 +15,6 @@ class DetailPage extends StatefulWidget {
 class _DetailPageState extends State<DetailPage> {
   var tfPersonName = TextEditingController();
   var tfPersonTel = TextEditingController();
-
-  Future<void> updatePerson(int person_id, String person_name, String person_tel) async {
-    print("Update Person: $person_id - $person_name $person_tel");
-  }
 
   @override
   void initState() {
@@ -47,7 +45,7 @@ class _DetailPageState extends State<DetailPage> {
                 decoration: const InputDecoration(hintText: "Person Tel"),
               ),
               ElevatedButton(onPressed: () {
-                updatePerson(widget.person.person_id, tfPersonName.text, tfPersonTel.text);
+                context.read<DetailPageCubit>().updatePerson(widget.person.person_id, tfPersonName.text, tfPersonTel.text);
               }, child: const Text("Update"))
             ],
           ),

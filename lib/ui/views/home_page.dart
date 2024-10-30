@@ -1,7 +1,9 @@
 import 'package:contact_app/data/entity/person.dart';
+import 'package:contact_app/ui/cubit/home_page_cubit.dart';
 import 'package:contact_app/ui/views/add_page.dart';
 import 'package:contact_app/ui/views/detail_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,28 +15,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool isSearch = false;
 
-  Future<void> searchPerson(String searchText) async {
-    print("Search Person: $searchText");
-  }
-
-  Future<List<Person>> personsData() async {
-    var personsList = <Person>[];
-    var p1 = Person(
-        person_id: 1, person_name: "Abdulhakim", person_tel: "05301112233");
-    var p2 =
-        Person(person_id: 2, person_name: "Furkan", person_tel: "05301114455");
-    var p3 =
-        Person(person_id: 3, person_name: "Ömer", person_tel: "05301116677");
-
-    personsList.add(p1);
-    personsList.add(p2);
-    personsList.add(p3);
-
-    return personsList;
-  }
-
-  Future<void> deletePerson(int person_id) async {
-    print("Person Id: $person_id");
+  @override
+  void initState() {
+    super.initState();
+    context.read<HomePageCubit>().personsData();
   }
 
   @override
@@ -43,39 +27,38 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: isSearch
             ? TextField(
-                decoration: const InputDecoration(hintText: "Search"),
-                onChanged: (searchText) {
-                  searchPerson(searchText);
-                },
-              )
+          decoration: const InputDecoration(hintText: "Search"),
+          onChanged: (searchText) {
+            context.read<HomePageCubit>().searchPerson(searchText);
+          },
+        )
             : const Text("Contacts"),
         actions: [
           isSearch
               ? IconButton(
-                  onPressed: () {
-                    setState(() {
-                      isSearch = false;
-                    });
-                  },
-                  icon: const Icon(Icons.clear),
-                )
+            onPressed: () {
+              setState(() {
+                isSearch = false;
+              });
+              context.read<HomePageCubit>().personsData();
+            },
+            icon: const Icon(Icons.clear),
+          )
               : IconButton(
-                  onPressed: () {
-                    setState(() {
-                      isSearch = true;
-                    });
-                  },
-                  icon: const Icon(Icons.search),
-                )
+            onPressed: () {
+              setState(() {
+                isSearch = true;
+              });
+            },
+            icon: const Icon(Icons.search),
+          )
         ],
       ),
-      body: FutureBuilder<List<Person>>(
-        future: personsData(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            var personsList = snapshot.data;
+      body: BlocBuilder<HomePageCubit, List<Person>>(
+        builder: (context, personsList) {
+          if (personsList.isNotEmpty) {
             return ListView.builder(
-                itemCount: personsList!.length,
+                itemCount: personsList.length,
                 itemBuilder: (context, index) {
                   var person = personsList[index];
                   return GestureDetector(
@@ -84,7 +67,9 @@ class _HomePageState extends State<HomePage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  DetailPage(person: person))).then((value) {});
+                                  DetailPage(person: person))).then((value) {
+                        context.read<HomePageCubit>().personsData();
+                      });
                     },
                     child: Card(
                       child: SizedBox(
@@ -96,7 +81,7 @@ class _HomePageState extends State<HomePage> {
                               padding: const EdgeInsets.all(16),
                               child: Column(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                                MainAxisAlignment.spaceEvenly,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
@@ -116,7 +101,8 @@ class _HomePageState extends State<HomePage> {
                                     action: SnackBarAction(
                                         label: "Yes",
                                         onPressed: () {
-                                          deletePerson(person.person_id);
+                                          context.read<HomePageCubit>()
+                                              .deletePerson(person.person_id);
                                         }),
                                   ),
                                 );
@@ -140,9 +126,9 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const AddPage()))
+              MaterialPageRoute(builder: (context) => const AddPage()))
               .then((value) {
-            print("Anasayfaya dönüldü");
+            context.read<HomePageCubit>().personsData();
           });
         },
         child: const Icon(Icons.add),
