@@ -1,3 +1,4 @@
+import 'dart:io';  // File import etmek için
 import 'package:contact_app/data/entity/person.dart';
 import 'package:contact_app/ui/cubit/home_page_cubit.dart';
 import 'package:contact_app/ui/views/add_page.dart';
@@ -58,66 +59,81 @@ class _HomePageState extends State<HomePage> {
         builder: (context, personsList) {
           if (personsList.isNotEmpty) {
             return ListView.builder(
-                itemCount: personsList.length,
-                itemBuilder: (context, index) {
-                  var person = personsList[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  DetailPage(person: person))).then((value) {
-                        context.read<HomePageCubit>().personsData();
-                      });
-                    },
-                    child: Card(
-                      child: SizedBox(
-                        height: 80,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    person.person_name,
-                                    style: const TextStyle(fontSize: 18),
-                                  ),
-                                  Text(person.person_tel),
-                                ],
+              itemCount: personsList.length,
+              itemBuilder: (context, index) {
+                var person = personsList[index];
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DetailPage(person: person)))
+                        .then((value) {
+                      context.read<HomePageCubit>().personsData();
+                    });
+                  },
+                  child: Card(
+                    child: SizedBox(
+                      height: 80,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Profile image in a circle
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: CircleAvatar(
+                                  radius: 30, // Set the radius to control the size
+                                  backgroundImage: person.person_image != null
+                                      ? FileImage(File(person.person_image!))
+                                      : null,  // personImageUrl, yerel dosya yolunu taşıyor
+                                  backgroundColor: Colors.grey[200], // Placeholder color
+                                ),
                               ),
+                              Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      person.person_name,
+                                      style: const TextStyle(fontSize: 18),
+                                    ),
+                                    Text(person.person_tel),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text("Delete ${person.person_name}?"),
+                                  action: SnackBarAction(
+                                    label: "Yes",
+                                    onPressed: () {
+                                      context.read<HomePageCubit>()
+                                          .deletePerson(person.person_id);
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                            icon: const Icon(
+                              Icons.clear,
+                              color: Colors.black54,
                             ),
-                            IconButton(
-                              onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                        "Delete ${person.person_name}?"),
-                                    action: SnackBarAction(
-                                        label: "Yes",
-                                        onPressed: () {
-                                          context.read<HomePageCubit>()
-                                              .deletePerson(person.person_id);
-                                        }),
-                                  ),
-                                );
-                              },
-                              icon: const Icon(
-                                Icons.clear,
-                                color: Colors.black54,
-                              ),
-                            )
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  );
-                });
+                  ),
+                );
+              },
+            );
           } else {
             return const Center();
           }
@@ -126,7 +142,7 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const AddPage()))
+              MaterialPageRoute(builder: (context) => AddPage()))
               .then((value) {
             context.read<HomePageCubit>().personsData();
           });
