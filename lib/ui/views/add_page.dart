@@ -34,7 +34,7 @@ class _AddPageState extends State<AddPage> {
                 decoration: const InputDecoration(hintText: "Person Tel"),
               ),
               ElevatedButton(onPressed: () {
-                context.read<AddPageCubit>().savePerson(tfPersonName.text, tfPersonTel.text);
+                context.read<AddPageCubit>().savePerson(tfPersonName.text, tfPersonTel.text, tfPersonName.text);
               }, child: const Text("Save"))
             ],
           ),

@@ -6,7 +6,7 @@ class AddPageCubit extends Cubit<void>{
 
   var prepo = PersonDaoRepository();
 
-  Future<void> savePerson(String person_name, String person_tel) async {
-    await prepo.savePerson(person_name, person_tel);
+  Future<void> savePerson(String person_name, String person_tel, String person_image) async {
+    await prepo.savePerson(person_name, person_tel, person_image);
   }
 }

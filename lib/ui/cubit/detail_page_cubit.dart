@@ -6,7 +6,7 @@ class DetailPageCubit extends Cubit<void> {
 
   var prepo = PersonDaoRepository();
 
-  Future<void> updatePerson(int person_id, String person_name, String person_tel) async {
-    await prepo.updatePerson(person_id, person_name, person_tel);
+  Future<void> updatePerson(int person_id, String person_name, String person_tel, String? person_image) async {
+    await prepo.updatePerson(person_id, person_name, person_tel, person_image);
   }
 }

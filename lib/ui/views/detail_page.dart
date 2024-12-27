@@ -45,7 +45,7 @@ class _DetailPageState extends State<DetailPage> {
                 decoration: const InputDecoration(hintText: "Person Tel"),
               ),
               ElevatedButton(onPressed: () {
-                context.read<DetailPageCubit>().updatePerson(widget.person.person_id, tfPersonName.text, tfPersonTel.text);
+                context.read<DetailPageCubit>().updatePerson(widget.person.person_id, tfPersonName.text, tfPersonTel.text, tfPersonName.text);
               }, child: const Text("Update"))
             ],
           ),
