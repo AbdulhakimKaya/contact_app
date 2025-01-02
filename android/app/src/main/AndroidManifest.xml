@@ -20,6 +20,13 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+            <!-- Google Sign-In için meta-data -->
+            <meta-data
+                android:name="com.google.android.gms.auth.api.credentials.CREDENTIALS_API"
+                android:value="true" />
+            <meta-data
+                android:name="com.google.android.gms.auth.api.signin"
+                android:value="true" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

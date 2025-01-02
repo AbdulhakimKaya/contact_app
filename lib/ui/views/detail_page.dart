@@ -25,8 +25,15 @@ class _DetailPageState extends State<DetailPage> {
     var person = widget.person;
     tfPersonName.text = person.person_name;
     tfPersonTel.text = person.person_tel;
-    _selectedImage = person.person_image != null ? File(person.person_image!) : null; // Eğer kişiye ait resim varsa, resim yolu ile başla
+
+    // Resim dosyasının varlığını kontrol ediyoruz
+    if (person.person_image != null && File(person.person_image!).existsSync()) {
+      _selectedImage = File(person.person_image!);
+    } else {
+      _selectedImage = null;
+    }
   }
+
 
   // Görsel seçme fonksiyonu
   Future<void> _pickImage() async {
@@ -79,14 +86,20 @@ class _DetailPageState extends State<DetailPage> {
               )
                   : Column(
                 children: [
-                  const Text("Resim yükleyebilirsiniz."),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey, width: 1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                      child: const Text("Resim yükleyebilirsiniz.")),
+                  const SizedBox(height: 8,),
                   ElevatedButton(
                     onPressed: _pickImage,
                     child: const Text("Select Image"),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
               // Güncelleme düğmesi
               ElevatedButton(
                 onPressed: () {
