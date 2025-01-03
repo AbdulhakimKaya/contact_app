@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contact_app/data/entity/person.dart';
 import 'package:contact_app/data/repo/persondao_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -59,5 +58,9 @@ class HomePageCubit extends Cubit<List<Person>> {
   Future<void> deletePerson(String person_id) async {
     await prepo.deletePerson(person_id);
     await personsData();
+  }
+
+  Future<void> toggleFavorite(String personId, bool isFavorite) async {
+    await prepo.toggleFavorite(personId, isFavorite);
   }
 }

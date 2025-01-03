@@ -1,5 +1,5 @@
-import 'dart:collection';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:contact_app/data/entity/person.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class PersonDaoRepository {
@@ -15,6 +15,106 @@ class PersonDaoRepository {
         .collection("users")
         .doc(userId)
         .collection("contacts");
+  }
+
+  CollectionReference<Map<String, dynamic>> get collectionLists {
+    final userId = currentUser?.uid;
+    if (userId == null) {
+      throw Exception('Kullanıcı oturum açmamış');
+    }
+    return FirebaseFirestore.instance
+        .collection("users")
+        .doc(userId)
+        .collection("lists");
+  }
+
+  CollectionReference<Map<String, dynamic>> get collectionListMembers {
+    final userId = currentUser?.uid;
+    if (userId == null) {
+      throw Exception('Kullanıcı oturum açmamış');
+    }
+    return FirebaseFirestore.instance
+        .collection("users")
+        .doc(userId)
+        .collection("list_members");
+  }
+
+  // Favori işlemleri
+  Future<void> toggleFavorite(String personId, bool isFavorite) async {
+    await collectionPerson.doc(personId).update({'isFavorite': isFavorite});
+  }
+
+  // Liste işlemleri
+  Future<void> createList(String name) async {
+    final userId = currentUser?.uid;
+    if (userId == null) {
+      throw Exception('Kullanıcı oturum açmamış');
+    }
+
+    await collectionLists.add({
+      'name': name,
+      'userId': userId,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getLists() {
+    return collectionLists.orderBy('createdAt').snapshots();
+  }
+
+
+  Future<void> deleteList(String listId) async {
+    // Önce liste üyelerini sil
+    var members = await collectionListMembers
+        .where('listId', isEqualTo: listId)
+        .get();
+
+    for (var member in members.docs) {
+      await member.reference.delete();
+    }
+
+    // Sonra listeyi sil
+    await collectionLists.doc(listId).delete();
+  }
+
+  Future<void> addPersonToList(String listId, String personId) async {
+    final userId = currentUser?.uid;
+    if (userId == null) {
+      throw Exception('User not logged in');
+    }
+
+    try {
+      // Log the collection path and data
+      print('Adding to path: users/$userId/list_members');
+      print('Data: listId: $listId, personId: $personId');
+
+      // Create the document
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('list_members')
+          .add({
+        'listId': listId,
+        'personId': personId,
+        'addedAt': FieldValue.serverTimestamp(),
+      });
+
+      print('Document added successfully');
+    } catch (e) {
+      print('Error adding list member: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> removePersonFromList(String listId, String personId) async {
+    var members = await collectionListMembers
+        .where('listId', isEqualTo: listId)
+        .where('personId', isEqualTo: personId)
+        .get();
+
+    for (var member in members.docs) {
+      await member.reference.delete();
+    }
   }
 
   Future<void> savePerson(String person_name, String person_tel, String? person_image) async {
@@ -92,6 +192,27 @@ class PersonDaoRepository {
       print("Kişi silinirken hata oluştu: $e");
       rethrow;
     }
+  }
+
+  Stream<List<Person>> getPersonsInList(String listId) {
+    return collectionListMembers
+        .where('listId', isEqualTo: listId)
+        .snapshots()
+        .asyncMap((memberSnapshot) async {
+      List<Person> persons = [];
+
+      for (var memberDoc in memberSnapshot.docs) {
+        final personId = memberDoc.data()['personId'];
+        final personDoc = await collectionPerson.doc(personId).get();
+
+        if (personDoc.exists) {
+          final data = personDoc.data()!;
+          persons.add(Person.fromJson(data, personDoc.id));
+        }
+      }
+
+      return persons;
+    });
   }
 }
 

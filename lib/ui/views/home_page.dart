@@ -177,45 +177,61 @@ class _HomePageState extends State<HomePage> {
                               ],
                             ),
                           ),
-                          // Delete button
-                          IconButton(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text('Kişiyi Sil'),
-                                  content: Text('${person.person_name} kişisini silmek istediğinize emin misiniz?'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text('İptal'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        context.read<HomePageCubit>()
-                                            .deletePerson(person.person_id);
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text('Sil'),
-                                      style: TextButton.styleFrom(
-                                        foregroundColor: Colors.red,
-                                      ),
-                                    ),
-                                  ],
+                          // Favorite and Delete buttons
+                          Row(
+                            children: [
+                              IconButton(
+                                icon: Icon(
+                                  person.isFavorite ? Icons.star : Icons.star_border,
+                                  color: person.isFavorite ? Colors.amber : Colors.grey,
                                 ),
-                              );
-                            },
-                            icon: const Icon(
-                              Icons.delete_outline,
-                              color: Colors.red,
-                            ),
+                                onPressed: () {
+                                  context.read<HomePageCubit>().toggleFavorite(
+                                    person.person_id,
+                                    !person.isFavorite,
+                                  );
+                                },
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const Text('Kişiyi Sil'),
+                                      content: Text('${person.person_name} kişisini silmek istediğinize emin misiniz?'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text('İptal'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            context.read<HomePageCubit>()
+                                                .deletePerson(person.person_id);
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text('Sil'),
+                                          style: TextButton.styleFrom(
+                                            foregroundColor: Colors.red,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(
+                                  Icons.delete_outline,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
-                  ),
+                  )
                 );
               },
             );
