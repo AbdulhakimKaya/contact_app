@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:contact_app/data/entity/person.dart';
+import 'package:contact_app/ui/components/person_card.dart';
 import 'package:contact_app/ui/cubit/home_page_cubit.dart';
 import 'package:contact_app/ui/views/add_page.dart';
 import 'package:contact_app/ui/views/detail_page.dart';
@@ -124,114 +125,7 @@ class _HomePageState extends State<HomePage> {
                       context.read<HomePageCubit>().personsData();
                     });
                   },
-                  child: Card(
-                    child: SizedBox(
-                      height: 100,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Profile image and contact info
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: CircleAvatar(
-                                    radius: 35,
-                                    backgroundImage: person.person_image != null && person.person_image!.isNotEmpty
-                                        ? FileImage(File(person.person_image!))
-                                        : null,
-                                    backgroundColor: Colors.grey[200],
-                                    child: person.person_image == null || person.person_image!.isEmpty
-                                        ? const Icon(Icons.person, size: 35, color: Colors.grey)
-                                        : null,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          person.person_name,
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          person.person_tel,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.grey[600],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Favorite and Delete buttons
-                          Row(
-                            children: [
-                              IconButton(
-                                icon: Icon(
-                                  person.isFavorite ? Icons.star : Icons.star_border,
-                                  color: person.isFavorite ? Colors.amber : Colors.grey,
-                                ),
-                                onPressed: () {
-                                  context.read<HomePageCubit>().toggleFavorite(
-                                    person.person_id,
-                                    !person.isFavorite,
-                                  );
-                                },
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: const Text('Kişiyi Sil'),
-                                      content: Text('${person.person_name} kişisini silmek istediğinize emin misiniz?'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: const Text('İptal'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            context.read<HomePageCubit>()
-                                                .deletePerson(person.person_id);
-                                            Navigator.pop(context);
-                                          },
-                                          child: const Text('Sil'),
-                                          style: TextButton.styleFrom(
-                                            foregroundColor: Colors.red,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(
-                                  Icons.delete_outline,
-                                  color: Colors.red,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
+                  child: PersonCard(person: person)
                 );
               },
             );

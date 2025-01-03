@@ -1,10 +1,13 @@
 import 'dart:io';
 import 'package:contact_app/data/repo/persondao_repository.dart';
+import 'package:contact_app/ui/components/person_card.dart';
 import 'package:contact_app/ui/cubit/home_page_cubit.dart';
 import 'package:contact_app/ui/cubit/list_detail_page_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:contact_app/data/entity/person.dart';
+
+import 'detail_page.dart';
 
 class ListDetailPage extends StatefulWidget {
   final String listId;
@@ -48,7 +51,26 @@ class _ListDetailPageState extends State<ListDetailPage> {
     return BlocBuilder<ListDetailPageCubit, List<Person>>(
       builder: (context, persons) {
         if (persons.isEmpty) {
-          return const Center(child: Text('Bu listede henüz kişi yok'));
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.person,
+                  size: 64,
+                  color: Colors.grey[400],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Bu listede henüz kimse yok!',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          );
         }
         return ListView.builder(
           itemCount: persons.length,
@@ -59,18 +81,17 @@ class _ListDetailPageState extends State<ListDetailPage> {
   }
 
   Widget _buildPersonTile(Person person) {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundImage: person.person_image != null ? FileImage(File(person.person_image!)) : null,
-        child: person.person_image == null ? Text(person.person_name[0].toUpperCase()) : null,
-      ),
-      title: Text(person.person_name),
-      subtitle: Text(person.person_tel),
-      trailing: IconButton(
-        icon: const Icon(Icons.remove_circle_outline),
-        onPressed: () => listDetailCubit.removePerson(person.person_id),
-      ),
-    );
+    return GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetailPage(person: person),
+            ),
+          ).then((value) {
+            context.read<HomePageCubit>().personsData();
+          });
+        },child: PersonCard(person: person, isDeleted: false, isDeletedList: true,));
   }
 
   void _showAddPersonDialog(BuildContext context) {

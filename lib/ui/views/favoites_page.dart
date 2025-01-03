@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:contact_app/ui/components/person_card.dart';
+import 'package:contact_app/ui/cubit/home_page_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:contact_app/ui/cubit/favorites_cubit.dart';
@@ -54,35 +56,17 @@ class _FavoritesPageState extends State<FavoritesPage> {
             itemCount: favoritesList.length,
             itemBuilder: (context, index) {
               var person = favoritesList[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: person.person_image != null && person.person_image!.isNotEmpty
-                        ? FileImage(File(person.person_image!))
-                        : null,
-                    child: person.person_image == null || person.person_image!.isEmpty
-                        ? Text(person.person_name[0].toUpperCase())
-                        : null,
-                  ),
-                  title: Text(person.person_name),
-                  subtitle: Text(person.person_tel),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.star, color: Colors.amber),
-                    onPressed: () {
-                      context.read<FavoritesCubit>().toggleFavorite(person.person_id, !person.isFavorite);
-                    },
-                  ),
+              return GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => DetailPage(person: person),
                       ),
-                    );
-                  },
-                ),
-              );
+                    ).then((value) {
+                      context.read<HomePageCubit>().personsData();
+                    });
+                  },child: PersonCard(person: person, isDeleted: false,));
             },
           );
         },
