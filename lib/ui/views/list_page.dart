@@ -60,25 +60,39 @@ class _ListsPageState extends State<ListsPage> {
             itemCount: lists.length,
             itemBuilder: (context, index) {
               final list = lists[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: ListTile(
-                  leading: const Icon(Icons.list),
-                  title: Text(list.name),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete_outline, color: Colors.red),
-                    onPressed: () {
-                      _showDeleteConfirmation(context, list);
-                    },
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ListDetailPage(listId: list.id, listName: list.name,),
-                      ),
-                    );
-                  },
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ListDetailPage(listId: list.id, listName: list.name,),
+                    ),
+                  );
+                },
+                child: Card(
+                  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.list),
+                            const SizedBox(width: 8,),
+                            Text(list.name),
+                          ],
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete_outline, color: Colors.red),
+                          onPressed: () {
+                            _showDeleteConfirmation(context, list);
+                          },
+                        ),
+
+                      ],
+                    ),
+                  )
                 ),
               );
             },

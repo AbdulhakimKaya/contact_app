@@ -21,7 +21,7 @@ class HomePageCubit extends Cubit<List<Person>> {
       var documents = event.docs;
       for (var document in documents) {
         var key = document.id;
-        var data = document.data() as Map<String, dynamic>;
+        var data = document.data();
         var person = Person.fromJson(data, key);
         personList.add(person);
       }
@@ -43,7 +43,7 @@ class HomePageCubit extends Cubit<List<Person>> {
       var documents = event.docs;
       for (var document in documents) {
         var key = document.id;
-        var data = document.data() as Map<String, dynamic>;
+        var data = document.data();
         var person = Person.fromJson(data, key);
 
         if (person.person_name.toLowerCase().contains(searchText.toLowerCase())) {

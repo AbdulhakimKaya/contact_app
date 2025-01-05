@@ -32,22 +32,24 @@ class _ListDetailPageState extends State<ListDetailPage> {
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: listDetailCubit,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(widget.listName),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.person_add),
-              onPressed: () => _showAddPersonDialog(context),
-            ),
-          ],
+      child: Builder(
+        builder: (context) => Scaffold(
+          appBar: AppBar(
+            title: Text(widget.listName),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.person_add),
+                onPressed: () => _showAddPersonDialog(context),
+              ),
+            ],
+          ),
+          body: _buildPersonsList(context),
         ),
-        body: _buildPersonsList(),
       ),
     );
   }
 
-  Widget _buildPersonsList() {
+  Widget _buildPersonsList(BuildContext context) {
     return BlocBuilder<ListDetailPageCubit, List<Person>>(
       builder: (context, persons) {
         if (persons.isEmpty) {
@@ -80,33 +82,34 @@ class _ListDetailPageState extends State<ListDetailPage> {
     );
   }
 
-  Widget _buildPersonTile(Person person) {
-    return GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DetailPage(person: person),
-            ),
-          ).then((value) {
-            context.read<HomePageCubit>().personsData();
-          });
-        },child: PersonCard(person: person, isDeleted: false, isDeletedList: true,));
-  }
-
   void _showAddPersonDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (dialogContext) => BlocBuilder<HomePageCubit, List<Person>>(
-        builder: (context, persons) {
+        builder: (context, allPersons) {
+          // Mevcut listedeki kişileri al
+          final currentListPersons = listDetailCubit.state;
+
+          // Henüz listeye eklenmemiş kişileri filtrele
+          final notAddedPersons = allPersons.where((person) =>
+          !currentListPersons.any((listPerson) =>
+          listPerson.person_id == person.person_id
+          )
+          ).toList();
+
           return AlertDialog(
             title: const Text('Kişi Ekle'),
             content: SizedBox(
               width: double.maxFinite,
-              child: ListView.builder(
+              child: notAddedPersons.isEmpty
+                  ? const Center(
+                child: Text('Eklenebilecek kişi kalmadı'),
+              )
+                  : ListView.builder(
                 shrinkWrap: true,
-                itemCount: persons.length,
-                itemBuilder: (context, index) => _buildAddPersonTile(persons[index], dialogContext),
+                itemCount: notAddedPersons.length,
+                itemBuilder: (context, index) =>
+                    _buildAddPersonTile(notAddedPersons[index], dialogContext),
               ),
             ),
             actions: [
@@ -121,11 +124,30 @@ class _ListDetailPageState extends State<ListDetailPage> {
     );
   }
 
+  Widget _buildPersonTile(Person person) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailPage(person: person),
+          ),
+        ).then((value) {
+          context.read<HomePageCubit>().personsData();
+        });
+      },
+      child: PersonCard(person: person, isDeleted: false, isDeletedList: true),
+    );
+  }
+
   Widget _buildAddPersonTile(Person person, BuildContext dialogContext) {
     return ListTile(
       leading: CircleAvatar(
         backgroundImage: person.person_image != null ? FileImage(File(person.person_image!)) : null,
-        child: person.person_image == null ? Text(person.person_name[0].toUpperCase()) : null,
+        backgroundColor: Colors.grey[200],
+        child: person.person_image == null || person.person_image!.isEmpty
+            ? Text(person.person_name[0].toUpperCase())
+            : null,
       ),
       title: Text(person.person_name),
       subtitle: Text(person.person_tel),
@@ -136,6 +158,28 @@ class _ListDetailPageState extends State<ListDetailPage> {
           Navigator.pop(dialogContext);
         },
       ),
+    );
+  }
+}
+
+class MultiBlocBuilder<T1 extends Cubit<List<Person>>, T2 extends Cubit<List<Person>>, State> extends StatelessWidget {
+  final Widget Function(BuildContext, List<Person>, List<Person>) builder;
+
+  const MultiBlocBuilder({
+    Key? key,
+    required this.builder,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<T1, List<Person>>(
+      builder: (context, state1) {
+        return BlocBuilder<T2, List<Person>>(
+          builder: (context, state2) {
+            return builder(context, state1, state2);
+          },
+        );
+      },
     );
   }
 }

@@ -30,7 +30,7 @@ class PersonCard extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(8),
                     child: CircleAvatar(
-                      radius: 35,
+                      radius: 24,
                       backgroundImage: person.person_image != null && person.person_image!.isNotEmpty
                           ? FileImage(File(person.person_image!))
                           : null,
@@ -42,7 +42,7 @@ class PersonCard extends StatelessWidget {
                   ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
