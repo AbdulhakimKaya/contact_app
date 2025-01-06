@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 
@@ -82,7 +83,15 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               TextFormField(
                 controller: _emailController,
-                decoration: const InputDecoration(labelText: 'E-posta'),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintText: 'Email',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(width: 1),
+                  ),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Lütfen bir e-posta girin';
@@ -93,7 +102,15 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _passwordController,
-                decoration: const InputDecoration(labelText: 'Şifre'),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintText: 'Password',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(width: 1),
+                  ),
+                ),
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -103,17 +120,22 @@ class _LoginPageState extends State<LoginPage> {
                 },
               ),
               const SizedBox(height: 16),
-              _isLoading
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                onPressed: _login,
-                child: const Text('Giriş Yap'),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _googleLogin, // Google ile giriş butonu
-                child: const Text('Google ile Giriş Yap'),
-              ),
+             Row(
+               mainAxisAlignment: MainAxisAlignment.center,
+               children: [
+                 _isLoading
+                     ? const CircularProgressIndicator()
+                     : ElevatedButton(
+                   onPressed: _login,
+                   child: const Text('Giriş Yap'),
+                 ),
+                 const SizedBox(width: 16),
+                 ElevatedButton(
+                   onPressed: _googleLogin, // Google ile giriş butonu
+                   child: SvgPicture.asset('images/google-icon.svg', width: 20,),
+                 ),
+               ],
+             ),
               TextButton(
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/register');

@@ -4,22 +4,35 @@ import 'package:contact_app/ui/cubit/list_detail_page_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:contact_app/ui/cubit/home_page_cubit.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PersonCard extends StatelessWidget {
   final Person person;
   final bool? isDeleted;
   final bool? isDeletedList;
+  final bool? isFavorite;
+  final bool? isContact;
 
   const PersonCard({
     super.key,
-    required this.person, this.isDeleted = true, this.isDeletedList = false,
+    required this.person, this.isDeleted = true, this.isDeletedList = false, this.isFavorite = true, this.isContact = true,
   });
+
+  void _launchURL(BuildContext context, String? url) async {
+    if (url == null) return;
+    final uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Bağlantı açılamadı!'), backgroundColor: Colors.red),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: SizedBox(
-        height: 65,
+        height: 80,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -73,18 +86,23 @@ class PersonCard extends StatelessWidget {
             // Favorite and Delete buttons
             Row(
               children: [
-                IconButton(
-                  icon: Icon(
-                    person.isFavorite ? Icons.star : Icons.star_border,
-                    color: person.isFavorite ? Colors.amber : Colors.grey,
+                if(isContact == true)
+                  IconButton(onPressed: () => _launchURL(context, 'tel:${person.person_tel}'), icon: const Icon(Icons.phone)),
+                  IconButton(onPressed: () => _launchURL(context, 'sms:${person.person_tel}'), icon: const Icon(Icons.message)),
+
+                if(isFavorite == true)
+                  IconButton(
+                    icon: Icon(
+                      person.isFavorite ? Icons.star : Icons.star_border,
+                      color: person.isFavorite ? Colors.amber : Colors.grey,
+                    ),
+                    onPressed: () {
+                      context.read<HomePageCubit>().toggleFavorite(
+                        person.person_id,
+                        !person.isFavorite,
+                      );
+                    },
                   ),
-                  onPressed: () {
-                    context.read<HomePageCubit>().toggleFavorite(
-                      person.person_id,
-                      !person.isFavorite,
-                    );
-                  },
-                ),
 
                 if(isDeleted == true)
                   IconButton(

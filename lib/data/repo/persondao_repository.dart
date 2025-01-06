@@ -117,7 +117,7 @@ class PersonDaoRepository {
     }
   }
 
-  Future<void> savePerson(String person_name, String person_tel, String? person_image) async {
+  Future<void> savePerson(String person_name, String person_tel, String? person_image, bool isFavorite) async {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
@@ -130,6 +130,7 @@ class PersonDaoRepository {
       "person_name": person_name,
       "person_tel": person_tel,
       "person_image": person_image ?? "",
+      "isFavorite": isFavorite,
       "created_at": FieldValue.serverTimestamp(),
     };
 

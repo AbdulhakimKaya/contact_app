@@ -1,29 +1,47 @@
-import 'dart:io'; // File sınıfı için
-import 'package:flutter/material.dart'; // Material bileşenleri için
-import 'package:flutter_bloc/flutter_bloc.dart'; // Bloc kullanımı için
-import 'package:image_picker/image_picker.dart'; // Görsel seçimi için
-import 'package:contact_app/ui/cubit/add_page_cubit.dart'; // Cubit bağlantısı için
+import 'dart:io';
+import 'package:contact_app/data/entity/person.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:contact_app/ui/cubit/add_page_cubit.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class AddPage extends StatefulWidget {
-  const AddPage({super.key});
+  final Person? person; // Opsiyonel person parametresi
+
+  const AddPage({super.key, this.person});
 
   @override
   State<AddPage> createState() => _AddPageState();
 }
 
 class _AddPageState extends State<AddPage> {
-  var tfPersonName = TextEditingController(); // İsim için text controller
-  var tfPersonTel = TextEditingController(); // Telefon için text controller
-  File? _selectedImage; // Seçilen görseli tutacak değişken
+  var tfPersonName = TextEditingController();
+  var tfPersonTel = TextEditingController();
+  File? _selectedImage;
 
-  // Görsel seçme fonksiyonu
+  bool isFavorite = false; // Favori durumu için yerel değişken
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Eğer person parametresi varsa, varsayılan değerleri yükleyin
+    if (widget.person != null) {
+      tfPersonName.text = widget.person!.person_name;
+      tfPersonTel.text = widget.person!.person_tel;
+      isFavorite = widget.person!.isFavorite;
+    }
+  }
+
   Future<void> _pickImage() async {
     final pickedImage =
     await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (pickedImage != null) {
       setState(() {
-        _selectedImage = File(pickedImage.path); // Seçilen görsel dosyasını kaydet
+        _selectedImage = File(pickedImage.path);
       });
     }
   }
@@ -34,80 +52,130 @@ class _AddPageState extends State<AddPage> {
       appBar: AppBar(
         title: const Text("Add Page"),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.only(right: 50, left: 50),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                TextField(
-                  controller: tfPersonName,
-                  decoration: const InputDecoration(hintText: "Person Name"),
-                ),
-                const SizedBox(height: 20),
-                TextField(
-                  controller: tfPersonTel,
-                  decoration: const InputDecoration(hintText: "Person Tel"),
-                ),
-                const SizedBox(height: 20),
-                // Görsel seçme ve gösterme kısmı
-                _selectedImage != null
-                    ? Column(
-                  children: [
-                    Image.file(
-                      _selectedImage!,
-                      width: 150,
-                      height: 150,
-                      fit: BoxFit.cover,
+      body: Padding(
+        padding: const EdgeInsets.only(right: 24, left: 24),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundImage: _selectedImage != null
+                            ? FileImage(_selectedImage!)
+                            : null,
+                        backgroundColor: Colors.grey[200],
+                      ),
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: _pickImage,
+                        child: const Text("Change Image"),
+                      ),
+                    ],
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      isFavorite ? Icons.star : Icons.star_border,
+                      color: isFavorite ? Colors.amber : Colors.grey,
+                      size: 28,
                     ),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: _pickImage,
-                      child: const Text("Change Image"),
-                    ),
-                  ],
-                )
-                    : ElevatedButton(
-                  onPressed: _pickImage,
-                  child: const Text("Select Image"),
+                    onPressed: () {
+                      setState(() {
+                        isFavorite = !isFavorite;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: tfPersonName,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintText: 'Person Name',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(width: 1),
+                  ),
                 ),
-                const SizedBox(height: 20),
-                // Kaydetme düğmesi
-                ElevatedButton(
-                  onPressed: () {
-                    if (tfPersonName.text.isEmpty || tfPersonTel.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Lütfen tüm alanları doldurun."),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        MaskTextInputFormatter(
+                          mask: '(###) ### ## ##',
+                          filter: {'#': RegExp(r'[0-9]')},
                         ),
-                      );
-                      return;
-                    }
-
-                    // Kayıt işlemi (Cubit üzerinden)
-                    context.read<AddPageCubit>().savePerson(
-                      tfPersonName.text,
-                      tfPersonTel.text,
-                      _selectedImage != null ? _selectedImage!.path : '', // Görselin dosya yolu
-                    );
-
-                    // Başarılı mesajı ve sayfadan çıkış
+                      ],
+                      controller: tfPersonTel,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: '(5__) ___ __ __',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: const BorderSide(width: 1),
+                        ),
+                        prefixIcon: const Padding(
+                          padding: EdgeInsets.only(left: 0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                '+90 ',
+                                style: TextStyle(fontSize: 16),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  if (tfPersonName.text.isEmpty || tfPersonTel.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text("Kişi başarıyla kaydedildi."),
+                        content: Text("Lütfen tüm alanları doldurun."),
                       ),
                     );
-                    Navigator.pop(context);
-                  },
-                  child: const Text("Save"),
-                ),
+                    return;
+                  }
 
-              ],
-            ),
+                  String fullPhoneNumber = '+90${tfPersonTel.text}';
+
+                  context.read<AddPageCubit>().savePerson(
+                    tfPersonName.text,
+                    fullPhoneNumber,
+                    _selectedImage != null ? _selectedImage!.path : '',
+                    isFavorite, // Favori bilgisi ekleniyor
+                  );
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Kişi başarıyla kaydedildi."),
+                    ),
+                  );
+                  Navigator.pop(context);
+                },
+                child: const Text("Save"),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 }
+

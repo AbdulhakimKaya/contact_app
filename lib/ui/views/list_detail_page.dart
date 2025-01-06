@@ -136,7 +136,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
           context.read<HomePageCubit>().personsData();
         });
       },
-      child: PersonCard(person: person, isDeleted: false, isDeletedList: true),
+      child: PersonCard(person: person, isDeleted: false, isDeletedList: true, isFavorite: false,),
     );
   }
 

@@ -74,7 +74,15 @@ class _RegisterPageState extends State<RegisterPage> {
               children: [
                 TextFormField(
                   controller: _emailController,
-                  decoration: const InputDecoration(labelText: 'E-posta'),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: 'Email',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(width: 1),
+                    ),
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Lütfen bir e-posta girin';
@@ -85,7 +93,15 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _passwordController,
-                  decoration: const InputDecoration(labelText: 'Şifre'),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: 'Password',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(width: 1),
+                    ),
+                  ),
                   obscureText: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {

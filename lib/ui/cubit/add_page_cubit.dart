@@ -6,9 +6,9 @@ class AddPageCubit extends Cubit<void> {
 
   AddPageCubit() : super(0);
 
-  Future<void> savePerson(String person_name, String person_tel, String? person_image) async {
+  Future<void> savePerson(String person_name, String person_tel, String? person_image, bool isFavorite) async {
     try {
-      await prepo.savePerson(person_name, person_tel, person_image);
+      await prepo.savePerson(person_name, person_tel, person_image, isFavorite);
       print("Kişi başarıyla kaydedildi.");
     } catch (e) {
       print("Kişi kaydedilemedi: $e");
