@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:contact_app/data/entity/person.dart';
 import 'package:contact_app/ui/components/person_card.dart';
 import 'package:contact_app/ui/cubit/home_page_cubit.dart';
@@ -7,6 +6,7 @@ import 'package:contact_app/ui/views/detail_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -31,7 +31,12 @@ class _HomePageState extends State<HomePage> {
     } else {
       print("Kullanıcı oturum bilgisi alındı: ${user.uid}");
     }
+  }
 
+  Future<void> signOut() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    await googleSignIn.signOut();
+    await FirebaseAuth.instance.signOut();
   }
 
   @override
@@ -40,31 +45,31 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: isSearch
             ? TextField(
-          decoration: const InputDecoration(hintText: "Search"),
-          onChanged: (searchText) {
-            context.read<HomePageCubit>().searchPerson(searchText);
-          },
-        )
+                decoration: const InputDecoration(hintText: "Search"),
+                onChanged: (searchText) {
+                  context.read<HomePageCubit>().searchPerson(searchText);
+                },
+              )
             : const Text("Contacts"),
         actions: [
           isSearch
               ? IconButton(
-            onPressed: () {
-              setState(() {
-                isSearch = false;
-              });
-              context.read<HomePageCubit>().personsData();
-            },
-            icon: const Icon(Icons.clear),
-          )
+                  onPressed: () {
+                    setState(() {
+                      isSearch = false;
+                    });
+                    context.read<HomePageCubit>().personsData();
+                  },
+                  icon: const Icon(Icons.clear),
+                )
               : IconButton(
-            onPressed: () {
-              setState(() {
-                isSearch = true;
-              });
-            },
-            icon: const Icon(Icons.search),
-          )
+                  onPressed: () {
+                    setState(() {
+                      isSearch = true;
+                    });
+                  },
+                  icon: const Icon(Icons.search),
+                )
         ],
       ),
       drawer: Drawer(
@@ -98,7 +103,7 @@ class _HomePageState extends State<HomePage> {
               leading: const Icon(Icons.logout),
               title: const Text('Çıkış Yap'),
               onTap: () async {
-                await FirebaseAuth.instance.signOut();
+                await signOut();
                 if (mounted) {
                   Navigator.of(context).pop(); // Drawer'ı kapat
                 }
@@ -115,18 +120,17 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (context, index) {
                 var person = personsList[index];
                 return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DetailPage(person: person),
-                      ),
-                    ).then((value) {
-                      context.read<HomePageCubit>().personsData();
-                    });
-                  },
-                  child: PersonCard(person: person)
-                );
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DetailPage(person: person),
+                        ),
+                      ).then((value) {
+                        context.read<HomePageCubit>().personsData();
+                      });
+                    },
+                    child: PersonCard(person: person));
               },
             );
           } else {
