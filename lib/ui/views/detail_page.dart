@@ -117,11 +117,12 @@ class _DetailPageState extends State<DetailPage> {
             ),
             const SizedBox(height: 24),
             TextField(
-              controller: tfPersonName,
+              controller: tfPersonName,style: const TextStyle(color: Colors.black),
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.white,
                 hintText: 'Person Name',
+                hintStyle:  const TextStyle(color: Colors.grey),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: const BorderSide(
@@ -143,10 +144,12 @@ class _DetailPageState extends State<DetailPage> {
                           filter: {'#': RegExp(r'[0-9]')}),
                     ],
                     controller: tfPersonTel,
+                    style: const TextStyle(color: Colors.black),
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
                       hintText: '(5__) ___ __ __',
+                      hintStyle:  const TextStyle(color: Colors.grey),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                         borderSide: const BorderSide(
@@ -160,7 +163,7 @@ class _DetailPageState extends State<DetailPage> {
                           children: [
                             Text(
                               '+90 ',
-                              style: TextStyle(fontSize: 16),
+                              style: TextStyle(fontSize: 16, color: Colors.black),
                             )
                           ],
                         ),

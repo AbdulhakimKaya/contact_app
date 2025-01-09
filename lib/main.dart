@@ -7,21 +7,34 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-// Cubit'ler ve Sayfalarınızı içe aktarın
 import 'package:contact_app/ui/cubit/home_page_cubit.dart';
-import 'package:contact_app/ui/cubit/add_page_cubit.dart'; // AddPageCubit örnek olarak eklendi
+import 'package:contact_app/ui/cubit/add_page_cubit.dart';
 import 'package:contact_app/ui/views/login_page.dart';
 import 'package:contact_app/ui/views/register_page.dart';
 import 'package:provider/provider.dart';
 
+// Tema provider'ı için yeni class
+class ThemeProvider with ChangeNotifier {
+  bool _isDarkMode = false;
+
+  bool get isDarkMode => _isDarkMode;
+
+  ThemeData get theme => _isDarkMode
+      ? ThemeData.dark()
+      : ThemeData(primarySwatch: Colors.blue);
+
+  void toggleTheme() {
+    _isDarkMode = !_isDarkMode;
+    notifyListeners();
+  }
+}
+
 void main() async {
-  // Firebase Başlatma
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-
   runApp(const MyApp());
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -29,6 +42,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+          create: (_) => ThemeProvider(),
+        ),
         Provider<PersonDaoRepository>(
           create: (_) => PersonDaoRepository(),
         ),
@@ -50,17 +66,19 @@ class MyApp extends StatelessWidget {
               create: (_) => ListsCubit(),
             ),
           ],
-          child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Contact App',
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
-            ),
-            home: const AuthWrapper(),
-            routes: {
-              '/login': (context) => const LoginPage(),
-              '/register': (context) => const RegisterPage(),
-              '/home': (context) => const MainScreen(),
+          child: Consumer<ThemeProvider>(
+            builder: (context, themeProvider, child) {
+              return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: 'Contact App',
+                theme: themeProvider.theme,
+                home: const AuthWrapper(),
+                routes: {
+                  '/login': (context) => const LoginPage(),
+                  '/register': (context) => const RegisterPage(),
+                  '/home': (context) => const MainScreen(),
+                },
+              );
             },
           ),
         ),
@@ -68,6 +86,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({Key? key}) : super(key: key);
 
@@ -81,10 +100,9 @@ class AuthWrapper extends StatelessWidget {
           if (user == null) {
             return const LoginPage();
           } else {
-            return const MainScreen(); // HomePage yerine MainScreen
+            return const MainScreen();
           }
         }
-
         return const Scaffold(
           body: Center(
             child: CircularProgressIndicator(),

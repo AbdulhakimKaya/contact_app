@@ -49,7 +49,7 @@ class PersonCard extends StatelessWidget {
                           : null,
                       backgroundColor: Colors.grey[200],
                       child: person.person_image == null || person.person_image!.isEmpty
-                          ? Text(person.person_name[0].toUpperCase())
+                          ? Text(person.person_name[0].toUpperCase(), style: const TextStyle(color: Colors.deepPurple),)
                           : null,
                     ),
                   ),

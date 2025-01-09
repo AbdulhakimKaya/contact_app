@@ -146,7 +146,7 @@ class _ListDetailPageState extends State<ListDetailPage> {
         backgroundImage: person.person_image != null ? FileImage(File(person.person_image!)) : null,
         backgroundColor: Colors.grey[200],
         child: person.person_image == null || person.person_image!.isEmpty
-            ? Text(person.person_name[0].toUpperCase())
+            ? Text(person.person_name[0].toUpperCase(), style: const TextStyle(color: Colors.deepPurple),)
             : null,
       ),
       title: Text(person.person_name),

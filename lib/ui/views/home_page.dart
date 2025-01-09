@@ -1,4 +1,5 @@
 import 'package:contact_app/data/entity/person.dart';
+import 'package:contact_app/main.dart';
 import 'package:contact_app/ui/components/person_card.dart';
 import 'package:contact_app/ui/cubit/home_page_cubit.dart';
 import 'package:contact_app/ui/views/add_page.dart';
@@ -7,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -41,35 +43,38 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // ThemeProvider'dan tema durumunu al
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: isSearch
             ? TextField(
-                decoration: const InputDecoration(hintText: "Search"),
-                onChanged: (searchText) {
-                  context.read<HomePageCubit>().searchPerson(searchText);
-                },
-              )
+          decoration: const InputDecoration(hintText: "Search"),
+          onChanged: (searchText) {
+            context.read<HomePageCubit>().searchPerson(searchText);
+          },
+        )
             : const Text("Contacts"),
         actions: [
           isSearch
               ? IconButton(
-                  onPressed: () {
-                    setState(() {
-                      isSearch = false;
-                    });
-                    context.read<HomePageCubit>().personsData();
-                  },
-                  icon: const Icon(Icons.clear),
-                )
+            onPressed: () {
+              setState(() {
+                isSearch = false;
+              });
+              context.read<HomePageCubit>().personsData();
+            },
+            icon: const Icon(Icons.clear),
+          )
               : IconButton(
-                  onPressed: () {
-                    setState(() {
-                      isSearch = true;
-                    });
-                  },
-                  icon: const Icon(Icons.search),
-                )
+            onPressed: () {
+              setState(() {
+                isSearch = true;
+              });
+            },
+            icon: const Icon(Icons.search),
+          )
         ],
       ),
       drawer: Drawer(
@@ -105,9 +110,22 @@ class _HomePageState extends State<HomePage> {
               onTap: () async {
                 await signOut();
                 if (mounted) {
-                  Navigator.of(context).pop(); // Drawer'ı kapat
+                  Navigator.of(context).pop();
                 }
               },
+            ),
+            const Divider(),
+            ListTile(
+              leading: Icon(
+                themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+              ),
+              trailing: Switch(
+                value: themeProvider.isDarkMode,
+                onChanged: (value) {
+                  // Drawer'ı kapatmadan tema değişimini yap
+                  themeProvider.toggleTheme();
+                },
+              ),
             ),
           ],
         ),

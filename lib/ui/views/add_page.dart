@@ -93,10 +93,12 @@ class _AddPageState extends State<AddPage> {
               const SizedBox(height: 20),
               TextField(
                 controller: tfPersonName,
+                style: const TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.white,
                   hintText: 'Person Name',
+                  hintStyle:  const TextStyle(color: Colors.grey),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: const BorderSide(width: 1),
@@ -116,10 +118,12 @@ class _AddPageState extends State<AddPage> {
                         ),
                       ],
                       controller: tfPersonTel,
+                      style: const TextStyle(color: Colors.black),
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.white,
                         hintText: '(5__) ___ __ __',
+                        hintStyle:  const TextStyle(color: Colors.grey),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: const BorderSide(width: 1),
@@ -131,7 +135,7 @@ class _AddPageState extends State<AddPage> {
                             children: [
                               Text(
                                 '+90 ',
-                                style: TextStyle(fontSize: 16),
+                                style: TextStyle(fontSize: 16, color: Colors.black),
                               )
                             ],
                           ),
