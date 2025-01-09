@@ -12,9 +12,9 @@ class ListsCubit extends Cubit<List<CustomList>> {
         .orderBy('createdAt', descending: true)
         .snapshots()
         .listen((event) {
-      var lists = event.docs.map((doc) =>
-          CustomList.fromJson(doc.data(), doc.id)
-      ).toList();
+      var lists = event.docs
+          .map((doc) => CustomList.fromJson(doc.data(), doc.id))
+          .toList();
 
       emit(lists);
     });

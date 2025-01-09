@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:contact_app/ui/components/person_card.dart';
 import 'package:contact_app/ui/cubit/home_page_cubit.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +7,7 @@ import 'package:contact_app/data/entity/person.dart';
 import 'package:contact_app/ui/views/detail_page.dart';
 
 class FavoritesPage extends StatefulWidget {
-  const FavoritesPage({Key? key}) : super(key: key);
+  const FavoritesPage({super.key});
 
   @override
   State<FavoritesPage> createState() => _FavoritesPageState();
@@ -66,7 +65,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     ).then((value) {
                       context.read<HomePageCubit>().personsData();
                     });
-                  },child: PersonCard(person: person, isDeleted: false,));
+                  },
+                  child: PersonCard(
+                    person: person,
+                    isDeleted: false,
+                  ));
             },
           );
         },

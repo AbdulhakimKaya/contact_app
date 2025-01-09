@@ -21,15 +21,13 @@ class ThemeProvider with ChangeNotifier {
 
   bool get isDarkMode => _isDarkMode;
 
-  // Setter eklendi
   set isDarkMode(bool value) {
     _isDarkMode = value;
     notifyListeners();
   }
 
-  ThemeData get theme => _isDarkMode
-      ? ThemeData.dark()
-      : ThemeData(primarySwatch: Colors.blue);
+  ThemeData get theme =>
+      _isDarkMode ? ThemeData.dark() : ThemeData(primarySwatch: Colors.blue);
 
   void toggleTheme() {
     _isDarkMode = !_isDarkMode;
@@ -111,7 +109,7 @@ class MyApp extends StatelessWidget {
 }
 
 class AuthWrapper extends StatelessWidget {
-  const AuthWrapper({Key? key}) : super(key: key);
+  const AuthWrapper({super.key});
 
   @override
   Widget build(BuildContext context) {

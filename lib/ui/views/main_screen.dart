@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'favoites_page.dart';
 import 'home_page.dart';
 import 'list_page.dart';
@@ -35,17 +34,17 @@ class _MainScreenState extends State<MainScreen> {
           NavigationDestination(
             icon: Icon(Icons.home_outlined),
             selectedIcon: Icon(Icons.home),
-            label: 'Anasayfa',
+            label: 'Home',
           ),
           NavigationDestination(
             icon: Icon(Icons.star_outline),
             selectedIcon: Icon(Icons.star),
-            label: 'Favoriler',
+            label: 'Favorites',
           ),
           NavigationDestination(
             icon: Icon(Icons.list_outlined),
             selectedIcon: Icon(Icons.list),
-            label: 'Listelerim',
+            label: 'Lists',
           ),
         ],
       ),

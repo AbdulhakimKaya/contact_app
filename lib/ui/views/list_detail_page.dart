@@ -13,7 +13,8 @@ class ListDetailPage extends StatefulWidget {
   final String listId;
   final String listName;
 
-  const ListDetailPage({Key? key, required this.listId, required this.listName}) : super(key: key);
+  const ListDetailPage(
+      {super.key, required this.listId, required this.listName});
 
   @override
   State<ListDetailPage> createState() => _ListDetailPageState();
@@ -25,7 +26,8 @@ class _ListDetailPageState extends State<ListDetailPage> {
   @override
   void initState() {
     super.initState();
-    listDetailCubit = ListDetailPageCubit(widget.listId, context.read<PersonDaoRepository>());
+    listDetailCubit =
+        ListDetailPageCubit(widget.listId, context.read<PersonDaoRepository>());
   }
 
   @override
@@ -91,11 +93,10 @@ class _ListDetailPageState extends State<ListDetailPage> {
           final currentListPersons = listDetailCubit.state;
 
           // Henüz listeye eklenmemiş kişileri filtrele
-          final notAddedPersons = allPersons.where((person) =>
-          !currentListPersons.any((listPerson) =>
-          listPerson.person_id == person.person_id
-          )
-          ).toList();
+          final notAddedPersons = allPersons
+              .where((person) => !currentListPersons.any(
+                  (listPerson) => listPerson.person_id == person.person_id))
+              .toList();
 
           return AlertDialog(
             title: const Text('Kişi Ekle'),
@@ -103,14 +104,14 @@ class _ListDetailPageState extends State<ListDetailPage> {
               width: double.maxFinite,
               child: notAddedPersons.isEmpty
                   ? const Center(
-                child: Text('Eklenebilecek kişi kalmadı'),
-              )
+                      child: Text('Eklenebilecek kişi kalmadı'),
+                    )
                   : ListView.builder(
-                shrinkWrap: true,
-                itemCount: notAddedPersons.length,
-                itemBuilder: (context, index) =>
-                    _buildAddPersonTile(notAddedPersons[index], dialogContext),
-              ),
+                      shrinkWrap: true,
+                      itemCount: notAddedPersons.length,
+                      itemBuilder: (context, index) => _buildAddPersonTile(
+                          notAddedPersons[index], dialogContext),
+                    ),
             ),
             actions: [
               TextButton(
@@ -136,17 +137,27 @@ class _ListDetailPageState extends State<ListDetailPage> {
           context.read<HomePageCubit>().personsData();
         });
       },
-      child: PersonCard(person: person, isDeleted: false, isDeletedList: true, isFavorite: false,),
+      child: PersonCard(
+        person: person,
+        isDeleted: false,
+        isDeletedList: true,
+        isFavorite: false,
+      ),
     );
   }
 
   Widget _buildAddPersonTile(Person person, BuildContext dialogContext) {
     return ListTile(
       leading: CircleAvatar(
-        backgroundImage: person.person_image != null ? FileImage(File(person.person_image!)) : null,
+        backgroundImage: person.person_image != null
+            ? FileImage(File(person.person_image!))
+            : null,
         backgroundColor: Colors.grey[200],
         child: person.person_image == null || person.person_image!.isEmpty
-            ? Text(person.person_name[0].toUpperCase(), style: const TextStyle(color: Colors.deepPurple),)
+            ? Text(
+                person.person_name[0].toUpperCase(),
+                style: const TextStyle(color: Colors.deepPurple),
+              )
             : null,
       ),
       title: Text(person.person_name),
@@ -162,13 +173,14 @@ class _ListDetailPageState extends State<ListDetailPage> {
   }
 }
 
-class MultiBlocBuilder<T1 extends Cubit<List<Person>>, T2 extends Cubit<List<Person>>, State> extends StatelessWidget {
+class MultiBlocBuilder<T1 extends Cubit<List<Person>>,
+    T2 extends Cubit<List<Person>>, State> extends StatelessWidget {
   final Widget Function(BuildContext, List<Person>, List<Person>) builder;
 
   const MultiBlocBuilder({
-    Key? key,
+    super.key,
     required this.builder,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -36,7 +36,6 @@ class PersonCard extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Profile image and contact info
             Expanded(
               child: Row(
                 children: [
@@ -124,10 +123,10 @@ class PersonCard extends StatelessWidget {
                                 context.read<HomePageCubit>().deletePerson(person.person_id);
                                 Navigator.pop(context);
                               },
-                              child: const Text('Sil'),
                               style: TextButton.styleFrom(
                                 foregroundColor: Colors.red,
                               ),
+                              child: const Text('Sil'),
                             ),
                           ],
                         ),

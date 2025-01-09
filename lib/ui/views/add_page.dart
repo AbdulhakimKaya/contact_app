@@ -8,7 +8,7 @@ import 'package:contact_app/ui/cubit/add_page_cubit.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class AddPage extends StatefulWidget {
-  final Person? person; // Opsiyonel person parametresi
+  final Person? person;
 
   const AddPage({super.key, this.person});
 
@@ -21,13 +21,12 @@ class _AddPageState extends State<AddPage> {
   var tfPersonTel = TextEditingController();
   File? _selectedImage;
 
-  bool isFavorite = false; // Favori durumu için yerel değişken
+  bool isFavorite = false;
 
   @override
   void initState() {
     super.initState();
 
-    // Eğer person parametresi varsa, varsayılan değerleri yükleyin
     if (widget.person != null) {
       tfPersonName.text = widget.person!.person_name;
       tfPersonTel.text = widget.person!.person_tel;
@@ -37,7 +36,7 @@ class _AddPageState extends State<AddPage> {
 
   Future<void> _pickImage() async {
     final pickedImage =
-    await ImagePicker().pickImage(source: ImageSource.gallery);
+        await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (pickedImage != null) {
       setState(() {
@@ -98,7 +97,7 @@ class _AddPageState extends State<AddPage> {
                   filled: true,
                   fillColor: Colors.white,
                   hintText: 'Person Name',
-                  hintStyle:  const TextStyle(color: Colors.grey),
+                  hintStyle: const TextStyle(color: Colors.grey),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: const BorderSide(width: 1),
@@ -123,7 +122,7 @@ class _AddPageState extends State<AddPage> {
                         filled: true,
                         fillColor: Colors.white,
                         hintText: '(5__) ___ __ __',
-                        hintStyle:  const TextStyle(color: Colors.grey),
+                        hintStyle: const TextStyle(color: Colors.grey),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: const BorderSide(width: 1),
@@ -135,7 +134,8 @@ class _AddPageState extends State<AddPage> {
                             children: [
                               Text(
                                 '+90 ',
-                                style: TextStyle(fontSize: 16, color: Colors.black),
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.black),
                               )
                             ],
                           ),
@@ -160,11 +160,11 @@ class _AddPageState extends State<AddPage> {
                   String fullPhoneNumber = '+90${tfPersonTel.text}';
 
                   context.read<AddPageCubit>().savePerson(
-                    tfPersonName.text,
-                    fullPhoneNumber,
-                    _selectedImage != null ? _selectedImage!.path : '',
-                    isFavorite, // Favori bilgisi ekleniyor
-                  );
+                        tfPersonName.text,
+                        fullPhoneNumber,
+                        _selectedImage != null ? _selectedImage!.path : '',
+                        isFavorite,
+                      );
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -182,4 +182,3 @@ class _AddPageState extends State<AddPage> {
     );
   }
 }
-

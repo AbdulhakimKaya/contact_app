@@ -20,7 +20,7 @@ class DetailPage extends StatefulWidget {
 class _DetailPageState extends State<DetailPage> {
   var tfPersonName = TextEditingController();
   var tfPersonTel = TextEditingController();
-  File? _selectedImage; // Seçilen görseli tutacak değişken
+  File? _selectedImage;
 
   @override
   void initState() {
@@ -28,14 +28,13 @@ class _DetailPageState extends State<DetailPage> {
     var person = widget.person;
     tfPersonName.text = person.person_name;
 
-    // Telefon numarasını +90 olmadan göster
     var phoneNumber = person.person_tel;
     if (phoneNumber.startsWith('+90')) {
-      phoneNumber = phoneNumber.substring(3); // +90'ı kaldır
+      phoneNumber = phoneNumber.substring(3);
     }
-    phoneNumber = clearPhone(phoneNumber); // Temizle
-    tfPersonTel.text = formatPhone(phoneNumber); // Formatla
-    // Resim dosyasının varlığını kontrol ediyoruz
+    phoneNumber = clearPhone(phoneNumber);
+    tfPersonTel.text = formatPhone(phoneNumber);
+
     if (person.person_image != null &&
         File(person.person_image!).existsSync()) {
       _selectedImage = File(person.person_image!);
@@ -51,8 +50,7 @@ class _DetailPageState extends State<DetailPage> {
 
     if (pickedImage != null) {
       setState(() {
-        _selectedImage =
-            File(pickedImage.path); // Seçilen görsel dosyasını kaydet
+        _selectedImage = File(pickedImage.path);
       });
     }
   }
@@ -68,7 +66,6 @@ class _DetailPageState extends State<DetailPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            // Görsel seçme ve gösterme kısmı
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -83,7 +80,7 @@ class _DetailPageState extends State<DetailPage> {
                       child: _selectedImage == null
                           ? Text(
                               tfPersonName.text[0].toUpperCase(),
-                              style: TextStyle(fontSize: 24),
+                              style: const TextStyle(fontSize: 24),
                             )
                           : null,
                     ),
@@ -117,12 +114,13 @@ class _DetailPageState extends State<DetailPage> {
             ),
             const SizedBox(height: 24),
             TextField(
-              controller: tfPersonName,style: const TextStyle(color: Colors.black),
+              controller: tfPersonName,
+              style: const TextStyle(color: Colors.black),
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.white,
                 hintText: 'Person Name',
-                hintStyle:  const TextStyle(color: Colors.grey),
+                hintStyle: const TextStyle(color: Colors.grey),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: const BorderSide(
@@ -134,7 +132,6 @@ class _DetailPageState extends State<DetailPage> {
             const SizedBox(height: 24),
             Row(
               children: [
-                // Kullanıcıdan 10 haneli numara alınan alan
                 Expanded(
                   child: TextFormField(
                     inputFormatters: [
@@ -149,7 +146,7 @@ class _DetailPageState extends State<DetailPage> {
                       filled: true,
                       fillColor: Colors.white,
                       hintText: '(5__) ___ __ __',
-                      hintStyle:  const TextStyle(color: Colors.grey),
+                      hintStyle: const TextStyle(color: Colors.grey),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                         borderSide: const BorderSide(
@@ -163,7 +160,8 @@ class _DetailPageState extends State<DetailPage> {
                           children: [
                             Text(
                               '+90 ',
-                              style: TextStyle(fontSize: 16, color: Colors.black),
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.black),
                             )
                           ],
                         ),

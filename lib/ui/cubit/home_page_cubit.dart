@@ -46,7 +46,9 @@ class HomePageCubit extends Cubit<List<Person>> {
         var data = document.data();
         var person = Person.fromJson(data, key);
 
-        if (person.person_name.toLowerCase().contains(searchText.toLowerCase())) {
+        if (person.person_name
+            .toLowerCase()
+            .contains(searchText.toLowerCase())) {
           personList.add(person);
         }
       }

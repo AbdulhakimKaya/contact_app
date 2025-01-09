@@ -47,17 +47,19 @@ class _LoginPageState extends State<LoginPage> {
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
       if (googleUser == null) {
-        return; // Kullanıcı giriş yapmadı
+        return;
       }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
       // Firebase ile kullanıcıyı oturum açtırma
-      final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      final UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
 
       // Başarılı giriş sonrası yönlendirme
       if (userCredential.user != null) {
@@ -88,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                   filled: true,
                   fillColor: Colors.white,
                   hintText: 'Email',
-                  hintStyle:  const TextStyle(color: Colors.grey),
+                  hintStyle: const TextStyle(color: Colors.grey),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: const BorderSide(width: 1),
@@ -109,7 +111,7 @@ class _LoginPageState extends State<LoginPage> {
                   filled: true,
                   fillColor: Colors.white,
                   hintText: 'Password',
-                  hintStyle:  const TextStyle(color: Colors.grey),
+                  hintStyle: const TextStyle(color: Colors.grey),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: const BorderSide(width: 1),
@@ -124,22 +126,25 @@ class _LoginPageState extends State<LoginPage> {
                 },
               ),
               const SizedBox(height: 16),
-             Row(
-               mainAxisAlignment: MainAxisAlignment.center,
-               children: [
-                 _isLoading
-                     ? const CircularProgressIndicator()
-                     : ElevatedButton(
-                   onPressed: _login,
-                   child: const Text('Giriş Yap'),
-                 ),
-                 const SizedBox(width: 16),
-                 ElevatedButton(
-                   onPressed: _googleLogin, // Google ile giriş butonu
-                   child: SvgPicture.asset('images/google-icon.svg', width: 20,),
-                 ),
-               ],
-             ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _isLoading
+                      ? const CircularProgressIndicator()
+                      : ElevatedButton(
+                          onPressed: _login,
+                          child: const Text('Giriş Yap'),
+                        ),
+                  const SizedBox(width: 16),
+                  ElevatedButton(
+                    onPressed: _googleLogin,
+                    child: SvgPicture.asset(
+                      'images/google-icon.svg',
+                      width: 20,
+                    ),
+                  ),
+                ],
+              ),
               TextButton(
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/register');

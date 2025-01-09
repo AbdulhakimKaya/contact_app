@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'home_page.dart';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({Key? key}) : super(key: key);
+  const RegisterPage({super.key});
 
   @override
   _RegisterPageState createState() => _RegisterPageState();
@@ -36,17 +36,16 @@ class _RegisterPageState extends State<RegisterPage> {
 
         // Durum güncellemesi ve yönlendirme için
         if (mounted) {
-          setState(() {});  // State'i günceller, böylece AuthWrapper yeniden tetiklenir.
+          setState(
+              () {}); // State'i günceller, böylece AuthWrapper yeniden tetiklenir.
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => const HomePage(),
             ),
           );
-
         }
       } on FirebaseAuthException catch (e) {
-        // Hata mesajı göster
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(e.message ?? 'Bir hata oluştu.')),
@@ -79,7 +78,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     filled: true,
                     fillColor: Colors.white,
                     hintText: 'Email',
-                    hintStyle:  const TextStyle(color: Colors.grey),
+                    hintStyle: const TextStyle(color: Colors.grey),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: const BorderSide(width: 1),
@@ -100,7 +99,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     filled: true,
                     fillColor: Colors.white,
                     hintText: 'Password',
-                    hintStyle:  const TextStyle(color: Colors.grey),
+                    hintStyle: const TextStyle(color: Colors.grey),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: const BorderSide(width: 1),
@@ -120,9 +119,9 @@ class _RegisterPageState extends State<RegisterPage> {
                 _isLoading
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
-                  onPressed: _register,
-                  child: const Text('Kayıt Ol'),
-                ),
+                        onPressed: _register,
+                        child: const Text('Kayıt Ol'),
+                      ),
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () {

@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:contact_app/ui/cubit/lists_cubit.dart';
 import 'package:contact_app/data/entity/custom_list.dart';
-
 import 'list_detail_page.dart';
 
 class ListsPage extends StatefulWidget {
-  const ListsPage({Key? key}) : super(key: key);
+  const ListsPage({super.key});
 
   @override
   State<ListsPage> createState() => _ListsPageState();
@@ -65,35 +64,40 @@ class _ListsPageState extends State<ListsPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ListDetailPage(listId: list.id, listName: list.name,),
+                      builder: (context) => ListDetailPage(
+                        listId: list.id,
+                        listName: list.name,
+                      ),
                     ),
                   );
                 },
                 child: Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(Icons.list),
-                            const SizedBox(width: 8,),
-                            Text(list.name),
-                          ],
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete_outline, color: Colors.red),
-                          onPressed: () {
-                            _showDeleteConfirmation(context, list);
-                          },
-                        ),
-
-                      ],
-                    ),
-                  )
-                ),
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.list),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              Text(list.name),
+                            ],
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete_outline,
+                                color: Colors.red),
+                            onPressed: () {
+                              _showDeleteConfirmation(context, list);
+                            },
+                          ),
+                        ],
+                      ),
+                    )),
               );
             },
           );
@@ -140,7 +144,8 @@ class _ListsPageState extends State<ListsPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Listeyi Sil'),
-        content: Text('${list.name} listesini silmek istediğinize emin misiniz?'),
+        content:
+            Text('${list.name} listesini silmek istediğinize emin misiniz?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -151,10 +156,10 @@ class _ListsPageState extends State<ListsPage> {
               context.read<ListsCubit>().deleteList(list.id);
               Navigator.pop(context);
             },
-            child: const Text('Sil'),
             style: TextButton.styleFrom(
               foregroundColor: Colors.red,
             ),
+            child: const Text('Sil'),
           ),
         ],
       ),

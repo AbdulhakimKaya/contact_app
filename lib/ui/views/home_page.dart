@@ -43,38 +43,37 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // ThemeProvider'dan tema durumunu al
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
         title: isSearch
             ? TextField(
-          decoration: const InputDecoration(hintText: "Search"),
-          onChanged: (searchText) {
-            context.read<HomePageCubit>().searchPerson(searchText);
-          },
-        )
+                decoration: const InputDecoration(hintText: "Search"),
+                onChanged: (searchText) {
+                  context.read<HomePageCubit>().searchPerson(searchText);
+                },
+              )
             : const Text("Contacts"),
         actions: [
           isSearch
               ? IconButton(
-            onPressed: () {
-              setState(() {
-                isSearch = false;
-              });
-              context.read<HomePageCubit>().personsData();
-            },
-            icon: const Icon(Icons.clear),
-          )
+                  onPressed: () {
+                    setState(() {
+                      isSearch = false;
+                    });
+                    context.read<HomePageCubit>().personsData();
+                  },
+                  icon: const Icon(Icons.clear),
+                )
               : IconButton(
-            onPressed: () {
-              setState(() {
-                isSearch = true;
-              });
-            },
-            icon: const Icon(Icons.search),
-          )
+                  onPressed: () {
+                    setState(() {
+                      isSearch = true;
+                    });
+                  },
+                  icon: const Icon(Icons.search),
+                )
         ],
       ),
       drawer: Drawer(
@@ -122,7 +121,6 @@ class _HomePageState extends State<HomePage> {
               trailing: Switch(
                 value: themeProvider.isDarkMode,
                 onChanged: (value) {
-                  // Drawer'ı kapatmadan tema değişimini yap
                   themeProvider.toggleTheme();
                 },
               ),

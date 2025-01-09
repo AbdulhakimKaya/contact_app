@@ -12,9 +12,8 @@ class ThemeProvider with ChangeNotifier {
     _loadFromPrefs();
   }
 
-  ThemeData get theme => _isDarkMode
-      ? ThemeData.dark()
-      : ThemeData(primarySwatch: Colors.blue);
+  ThemeData get theme =>
+      _isDarkMode ? ThemeData.dark() : ThemeData(primarySwatch: Colors.blue);
 
   _initPrefs() async {
     _prefs = await SharedPreferences.getInstance();

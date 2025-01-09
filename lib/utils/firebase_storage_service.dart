@@ -7,20 +7,13 @@ class FirebaseStorageService {
 
   Future<String> uploadImage(File imageFile, String folderName) async {
     try {
-      // Dosya adını oluştur
       String fileName = basename(imageFile.path);
-
-      // Firebase Storage referansı
       Reference ref = _storage.ref('$folderName/$fileName');
-
-      // Dosyayı yükle
       UploadTask uploadTask = ref.putFile(imageFile);
-
-      // Yükleme işlemi tamamlandığında URL al
       TaskSnapshot snapshot = await uploadTask;
       String downloadURL = await snapshot.ref.getDownloadURL();
 
-      return downloadURL; // Görüntünün indirme bağlantısı
+      return downloadURL;
     } catch (e) {
       throw Exception("Image upload failed: $e");
     }
