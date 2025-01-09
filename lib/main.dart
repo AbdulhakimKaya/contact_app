@@ -12,12 +12,20 @@ import 'package:contact_app/ui/cubit/add_page_cubit.dart';
 import 'package:contact_app/ui/views/login_page.dart';
 import 'package:contact_app/ui/views/register_page.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Tema provider'ı için yeni class
 class ThemeProvider with ChangeNotifier {
   bool _isDarkMode = false;
+  final String key = "theme_status";
 
   bool get isDarkMode => _isDarkMode;
+
+  // Setter eklendi
+  set isDarkMode(bool value) {
+    _isDarkMode = value;
+    notifyListeners();
+  }
 
   ThemeData get theme => _isDarkMode
       ? ThemeData.dark()
@@ -25,25 +33,40 @@ class ThemeProvider with ChangeNotifier {
 
   void toggleTheme() {
     _isDarkMode = !_isDarkMode;
+    // Tema değiştiğinde SharedPreferences'a kaydet
+    saveTheme();
     notifyListeners();
+  }
+
+  // Tema durumunu kaydetmek için yeni method
+  Future<void> saveTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('theme_status', _isDarkMode);
   }
 }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+
+  // SharedPreferences'ı başlat
+  final prefs = await SharedPreferences.getInstance();
+  final isDarkMode = prefs.getBool('theme_status') ?? false;
+
+  runApp(MyApp(initialThemeIsDark: isDarkMode));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final bool initialThemeIsDark;
+
+  const MyApp({super.key, this.initialThemeIsDark = false});
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => ThemeProvider(),
+          create: (_) => ThemeProvider()..isDarkMode = initialThemeIsDark,
         ),
         Provider<PersonDaoRepository>(
           create: (_) => PersonDaoRepository(),
